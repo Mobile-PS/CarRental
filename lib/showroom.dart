@@ -1,6 +1,10 @@
+import 'package:car_rental/booking_screen.dart';
+import 'package:car_rental/car_widget1.dart';
+import 'package:car_rental/controllers/home_screen_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:car_rental/constants.dart';
 import 'package:car_rental/data.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:car_rental/car_widget.dart';
 import 'package:car_rental/dealer_widget.dart';
@@ -19,6 +23,9 @@ class _ShowroomState extends State<Showroom> {
   List<Car> cars = getCarList();
   List<Dealer> dealers = getDealerList();
 
+  final con = Get.put(HomeScreenController());
+
+
   @override
   void initState() {
     super.initState();
@@ -36,15 +43,15 @@ class _ShowroomState extends State<Showroom> {
         elevation: 0,
         brightness: Brightness.light,
         title: Text(
-          "Car Rental App",
-          style: GoogleFonts.muli(
+          "Bus Rental App",
+          style: GoogleFonts.mulish(
             fontSize: 28,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
         ),
         centerTitle: false,
-        actions: [
+       /* actions: [
           Padding(
             padding: EdgeInsets.only(right: 16),
             child: Icon(
@@ -53,7 +60,7 @@ class _ShowroomState extends State<Showroom> {
               size: 28,
             ),
           )
-        ],
+        ],*/
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -70,7 +77,7 @@ class _ShowroomState extends State<Showroom> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
                     borderSide: BorderSide(
-                      width: 0, 
+                      width: 0,
                       style: BorderStyle.none,
                     ),
                   ),
@@ -121,7 +128,13 @@ class _ShowroomState extends State<Showroom> {
 
                           Row(
                             children: [
-
+                              GestureDetector(onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => AvailableCars()),
+                                );
+                              },
+                                child:
                               Text(
                                 "view all",
                                 style: TextStyle(
@@ -129,7 +142,7 @@ class _ShowroomState extends State<Showroom> {
                                   fontWeight: FontWeight.bold,
                                   color: kPrimaryColor,
                                 ),
-                              ),
+                              )),
 
                               SizedBox(
                                 width: 8,
@@ -148,14 +161,37 @@ class _ShowroomState extends State<Showroom> {
                       ),
                     ),
 
-                    Container(
-                      height: 280,
-                      child: ListView(
-                        physics: BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        children: buildDeals(),
-                      ),
-                    ),
+                    GetBuilder(
+                        init: con,
+                        builder: (context) {
+                          if(con.loginScreenResponse !=null) {
+                            return Container(
+                              height: 280,
+                              margin: EdgeInsets.only(bottom: 16),
+                              child: ListView.builder(
+                                  physics: BouncingScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: con.loginScreenResponse.buses.length,
+                                  itemBuilder: (BuildContext context,
+                                      int index) {
+                                    return GestureDetector(onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => BookCar(car: con.loginScreenResponse.buses[index])),
+                                      );
+                                    },child:buildCar1(cars[index], index,con.loginScreenResponse.buses[index]));
+
+                                  }),
+                            );
+                          }
+                          else{
+                            return Container(
+                              height: 280,
+                              margin: EdgeInsets.only(bottom: 16),
+                            );
+                          }
+                        }),
+
 
                     GestureDetector(
                       onTap: () {
@@ -185,7 +221,7 @@ class _ShowroomState extends State<Showroom> {
                                 children: [
 
                                   Text(
-                                    "Available Cars",
+                                    "Available Buses",
                                     style: TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
@@ -227,59 +263,7 @@ class _ShowroomState extends State<Showroom> {
                       ),
                     ),
 
-                    Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
 
-                          Text(
-                            "TOP DEALERS",
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey[400],
-                            ),
-                          ),
-
-                          Row(
-                            children: [
-
-                              Text(
-                                "view all",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: kPrimaryColor,
-                                ),
-                              ),
-
-                              SizedBox(
-                                width: 8,
-                              ),
-
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                size: 12,
-                                color: kPrimaryColor,
-                              ),
-
-                            ],
-                          ),
-
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      height: 150,
-                      margin: EdgeInsets.only(bottom: 16),
-                      child: ListView(
-                        physics: BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        children: buildDealers(),
-                      ),
-                    ),
 
                   ],
                 ),
@@ -312,10 +296,10 @@ class _ShowroomState extends State<Showroom> {
       list.add(
         GestureDetector(
           onTap: () {
-            Navigator.push(
+           /* Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => BookCar(car: cars[i])),
-            );
+            );*/
           },
           child: buildCar(cars[i], i)
         )
@@ -344,6 +328,9 @@ class _ShowroomState extends State<Showroom> {
     return GestureDetector(
       onTap: () {
         setState(() {
+          if(item.pos == 1){
+            Get.to(Bookingscreen());
+          }
           selectedItem = item;
         });
       },
@@ -351,8 +338,7 @@ class _ShowroomState extends State<Showroom> {
         width: 50,
         child: Stack(
           children: <Widget>[
-
-            selectedItem == item 
+            selectedItem == item
             ? Center(
               child: Container(
                 height: 50,

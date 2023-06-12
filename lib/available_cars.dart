@@ -1,8 +1,11 @@
 import 'package:car_rental/car_widget.dart';
+import 'package:car_rental/car_widget2.dart';
+import 'package:car_rental/controllers/home_screen_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:car_rental/constants.dart';
 import 'package:car_rental/data.dart';
 import 'package:car_rental/book_car.dart';
+import 'package:get/get.dart';
 
 class AvailableCars extends StatefulWidget {
   @override
@@ -13,6 +16,9 @@ class _AvailableCarsState extends State<AvailableCars> {
 
   List<Filter> filters = getFilterList();
   Filter selectedFilter;
+
+  final con = Get.put(HomeScreenController());
+
 
   @override
   void initState() {
@@ -39,23 +45,23 @@ class _AvailableCarsState extends State<AvailableCars> {
                   Navigator.pop(context);
                 },
                 child: Container(
-                  width: 45,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
+                    width: 45,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                      border: Border.all(
+                        color: Colors.grey[300],
+                        width: 1,
+                      ),
                     ),
-                    border: Border.all(
-                      color: Colors.grey[300],
-                      width: 1,
-                    ),
-                  ),
-                  child: Icon(
-                    Icons.keyboard_arrow_left,
-                    color: Colors.black,
-                    size: 28,
-                  )
+                    child: Icon(
+                      Icons.keyboard_arrow_left,
+                      color: Colors.black,
+                      size: 28,
+                    )
                 ),
               ),
 
@@ -64,7 +70,7 @@ class _AvailableCarsState extends State<AvailableCars> {
               ),
 
               Text(
-                "Available Cars (" + getCarList().length.toString() + ")",
+                "Available Buses (" + con.loginScreenResponse.buses.length.toString() + ")",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 36,
@@ -77,13 +83,30 @@ class _AvailableCarsState extends State<AvailableCars> {
               ),
 
               Expanded(
-                child: GridView.count(
-                  physics: BouncingScrollPhysics(),
-                  childAspectRatio: 1 / 1.55,
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
-                  children: getCarList().map((item) {
+                child:GridView.builder(
+
+                    physics: BouncingScrollPhysics(),
+                    gridDelegate:
+                    SliverGridDelegateWithFixedCrossAxisCount(
+                      childAspectRatio: 4/ 5,
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                    ),
+                    itemCount: con.loginScreenResponse.buses.length,
+                    itemBuilder: (BuildContext context,
+                        int index) {
+                      return  GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => BookCar(car: con.loginScreenResponse.buses[index])),
+                            );
+                          },
+                          child: buildCar2(index,con.loginScreenResponse.buses[index])
+                      );
+                    }
+                  /*children: getCarList().map((item) {
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -93,7 +116,7 @@ class _AvailableCarsState extends State<AvailableCars> {
                       },
                       child: buildCar(item, null)
                     );
-                  }).toList(),
+                  }).toList(),*/
                 ),
               ),
 
@@ -101,7 +124,7 @@ class _AvailableCarsState extends State<AvailableCars> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
+      /*   bottomNavigationBar: Container(
         height: 90,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -114,7 +137,7 @@ class _AvailableCarsState extends State<AvailableCars> {
             ),
           ],
         ),
-      ),
+      ),*/
     );
   }
 
@@ -154,17 +177,18 @@ class _AvailableCarsState extends State<AvailableCars> {
           selectedFilter = filter;
         });
       },
-      child: Padding(
-        padding: EdgeInsets.only(right: 16),
-        child: Text(
-          filter.name,
-          style: TextStyle(
-            color: selectedFilter == filter ? kPrimaryColor : Colors.grey[300],
-            fontSize: 16,
-            fontWeight: selectedFilter == filter ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-      ),
+      child:Padding(padding: EdgeInsets.all(5.0),
+          child:
+
+          Text(
+            filter.name,
+            style: TextStyle(
+              color: selectedFilter == filter ? kPrimaryColor : Colors.grey[300],
+              fontSize: 16,
+              fontWeight: selectedFilter == filter ? FontWeight.bold : FontWeight.normal,
+            ),
+
+          )),
     );
   }
 }

@@ -1,10 +1,14 @@
+import 'package:car_rental/api/constants.dart';
+import 'package:car_rental/carbooking_form.dart';
+import 'package:car_rental/models/buses_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:car_rental/constants.dart';
 import 'package:car_rental/data.dart';
+import 'package:get/get.dart';
 
 class BookCar extends StatefulWidget {
 
-  final Car car;
+  final Buses car;
 
   BookCar({@required this.car});
 
@@ -18,7 +22,7 @@ class _BookCarState extends State<BookCar> {
 
   List<Widget> buildPageIndicator(){
     List<Widget> list = [];
-    for (var i = 0; i < widget.car.images.length; i++) {
+    for (var i = 0; i < 2; i++) {
       list.add(buildIndicator(i == _currentImage));
     }
     return list;
@@ -44,19 +48,19 @@ class _BookCarState extends State<BookCar> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Container(
+        child: SingleChildScrollView(
+        child:
+
+        Container(
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-              Expanded(
-                child: Container(
+               Container(
                   padding: EdgeInsets.symmetric(vertical: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
@@ -143,7 +147,7 @@ class _BookCarState extends State<BookCar> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          widget.car.model,
+                          widget.car.busName,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 36,
@@ -156,23 +160,8 @@ class _BookCarState extends State<BookCar> {
                         height: 8,
                       ),
 
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          widget.car.brand,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(
-                        height: 8,
-                      ),
-
-                      Expanded(
-                        child: Container(
+                      Container(
+                          height: MediaQuery.of(context).size.height/3,
                           child: PageView(
                             physics: BouncingScrollPhysics(),
                             onPageChanged: (int page){
@@ -180,23 +169,25 @@ class _BookCarState extends State<BookCar> {
                                 _currentImage = page;
                               });
                             },
-                            children: widget.car.images.map((path) {
-                              return Container(
-                                padding: EdgeInsets.symmetric(horizontal: 16,),
+                            children: [
+                               Container(
+                                 height: MediaQuery.of(context).size.height/3,
+
+                                 padding: EdgeInsets.symmetric(horizontal: 16,),
                                 child: Hero(
-                                  tag: widget.car.model,
-                                  child: Image.asset(
-                                    path,
+                                  tag: 'model',
+                                  child: Image.network(
+                                    ApiConstants().imagebaseUrl+widget.car.photo,
                                     fit: BoxFit.scaleDown,
                                   ),
                                 ),
-                              );
-                            }).toList(),
-                          ),
+                              )
+                            ]
+
                         ),
                       ),
 
-                      widget.car.images.length > 1
+                     /* 2 > 1
                       ? Container(
                         margin: EdgeInsets.symmetric(vertical: 16),
                         height: 30,
@@ -205,9 +196,9 @@ class _BookCarState extends State<BookCar> {
                           children: buildPageIndicator(),
                         ),
                       )
-                      : Container(),
+                      : Container(),*/
 
-                      Padding(
+                      /*Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -237,12 +228,12 @@ class _BookCarState extends State<BookCar> {
 
                           ],
                         ),
-                      ),
+                      ),*/
 
                     ],
                   ),
                 ),
-              ),
+
               
               Container(
                 decoration: BoxDecoration(
@@ -255,7 +246,6 @@ class _BookCarState extends State<BookCar> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     Padding(
                       padding: EdgeInsets.only(top: 16, left: 16, right: 16),
                       child: Text(
@@ -268,7 +258,145 @@ class _BookCarState extends State<BookCar> {
                       ),
                     ),
 
-                    Container(
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        widget.car.busDetails,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Row(children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Seater:',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          widget.car.seater,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],),
+
+                    SizedBox(height: 10,),
+                    Row(children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Type:',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          widget.car.type,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],),
+                    SizedBox(height: 10,),
+                    Row(children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Extra Charges Per day :',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          widget.car.perExtraDayChange,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],),
+                    SizedBox(height: 10,),
+                    Row(children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'KM Price In City :',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          widget.car.perKMPriceInCity,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],),
+                    SizedBox(height: 10,),
+                    Row(children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'KM Price Out Off City :',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          widget.car.perKMPriceOutOfCity,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],),
+
+                   SizedBox(height: 20,)
+                   /* Container(
                       height: 80,
                       padding: EdgeInsets.only(top: 8, left: 16,),
                       margin: EdgeInsets.only(bottom: 16),
@@ -284,7 +412,7 @@ class _BookCarState extends State<BookCar> {
                           buildSpecificationCar("Top Speed", "121 mph"),
                         ],
                       ),
-                    ),
+                    ),*/
 
                   ],
                 ),
@@ -292,7 +420,7 @@ class _BookCarState extends State<BookCar> {
 
             ],
           ),
-        ),
+        )),
       ),
       bottomNavigationBar: Container(
         height: 90,
@@ -303,7 +431,8 @@ class _BookCarState extends State<BookCar> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
+
+           /* Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -349,7 +478,11 @@ class _BookCarState extends State<BookCar> {
                 ),
 
               ],
-            ),
+            ),*/
+            Spacer(),
+            InkWell(onTap: () {
+              Get.to(BookingForm(car1: widget.car),);
+            },child:
             Container(
               height: 50,
               decoration: BoxDecoration(
@@ -371,7 +504,7 @@ class _BookCarState extends State<BookCar> {
                   ),
                 ),
               ),
-            ),
+            )),
           ],
         ),
       ),
